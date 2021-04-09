@@ -9,7 +9,7 @@ import { Brand } from '../models/brand';
 })
 export class BrandService {
 
-  apiUrl = 'https://localhost:44342/api/brands/getall';
+  apiUrl = 'https://localhost:44320/api/brands/getall';
 
   constructor(private httpClient: HttpClient) { }
 

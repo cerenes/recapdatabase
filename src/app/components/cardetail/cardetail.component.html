@@ -1,10 +1,10 @@
 <div class="card text-light bg-dark mb-12" style="width: 40rem">
-  <div class="card-body">
-    <h5 *ngFor="let cardetail of carDetails" class="card-title">
-      {{ cardetail.description }}
-    </h5>
-  </div>
-  <ul *ngFor="let cardetail of carDetails" class="list-group list-group-flush">
+  
+  <img [src]="setImage()" 
+     class=""
+     style="height: 100%; width: 100%; object-fit: contain"
+/>
+  <ul *ngFor="let cardetail of cardetails" class="list-group list-group-flush">
     <li class="list-group-item list-group-item-dark">
       {{ cardetail.brandName }}
     </li>
@@ -14,5 +14,10 @@
     <li class="list-group-item list-group-item-dark">
       {{ cardetail.dailyPrice }}
     </li>
+    <button class ="btn btn-primary"
+      routerLink="/cars/rental/{{cardetail.Id}}">
+       <i class="bi-search me-1"></i> Kirala
+
+    </button>
   </ul>
 </div>
