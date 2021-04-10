@@ -6,6 +6,7 @@ import { Car } from '../models/car';
 import { ResponseModel } from '../models/responseModel';
 import { environment } from 'src/environments/environment';
 import { CarDetail } from '../models/carDetail';
+import { SingleResponseModel } from '../models/singleResponseModel';
 
 @Injectable({
   providedIn: 'root'
@@ -33,5 +34,14 @@ export class CarService {
     let newPath = environment.apiUrl+"/cars/getbycardetail="+Id;
     return this.httpClient.get<ListResponseModel<CarDetail>>(newPath);
   }
- 
+  add(car:Car): Observable<ResponseModel>{
+    return this.httpClient.post<ResponseModel>(this.apiUrl+"cars/add", car)
+  }
+  update(car: Car): Observable<ResponseModel> {
+    return this.httpClient.put<ResponseModel>(this.apiUrl, car);
+ }
+ getCarById(Id: number): Observable<SingleResponseModel<Car>> {
+  let newPath: string = this.apiUrl + 'cars/getbyid?Id=' + Id;
+  return this.httpClient.get<SingleResponseModel<Car>>(newPath);
+}
 }

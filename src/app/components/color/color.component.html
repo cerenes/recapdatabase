@@ -4,7 +4,12 @@
     routerLink = "/cars/color/{{color.colorId}}"
     *ngFor="let color of colors" 
     [class]="getCurrentColorClass(color)">
-    {{color.colorName}}</li>
+    {{color.colorName}}
+    <button class="btn btn-sm btn-primary rounded-0 px-4"
+        routerLink="/colors/update/{{ color.colorId }}">
+       <i class="bi-pencil me-1"></i> GÜNCELLE
+    </button>
+  </li>
   </ul>
   
   <h5 *ngIf="currentColor">{{currentColor.colorName}} seçtiniz</h5>
