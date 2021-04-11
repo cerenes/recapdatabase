@@ -1,65 +1,80 @@
 <div class="card mt-4">
-    <div class="card-header text-center">
-      <strong>Ödeme İşlemlemi</strong>
-    </div>
-    <div class="card-body">
+  <div class="card-header text-center">
+    <strong>Ödeme İşlemlemi</strong>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="cardAddForm" (ngSubmit)="add()"></form>
+    <div class="row">
+      <div class="inputbox mt-3">
+        <span>Kart Üzerindeki Ad Soyad</span>
+        <input
+          [(ngModel)]="cardNameSurname"
+          type="text"
+          name="name"
+          class="form-control"
+          required="required"
+        />
+      </div>
       <div class="row">
-        <div class="inputbox mt-3">
-          <span>Kart Üzerindeki Ad Soyad</span>
-          <input
-            [(ngModel)]="cardNameSurname"
-            type="text"
-            name="name"
-            class="form-control"
-            required="required"
-          />
+        <div class="col-md-6">
+          <div class="inputbox mt-3 mr-2">
+            <span>Kart Numarası</span>
+            <input
+              [(ngModel)]="cardNumber"
+              type="text"
+              name="name"
+              class="form-control"
+              required="required"
+            />
+            <i class="fa fa-credit-card"></i>
+          </div>
         </div>
-        <div class="row">
-          <div class="col-md-6">
+        <div class="col-md-6">
+          <div class="d-flex flex-row">
             <div class="inputbox mt-3 mr-2">
-              <span>Kart Numarası</span>
+              <span>Son Kullanım Tarihi</span>
               <input
-                [(ngModel)]="cardNumber"
+                [(ngModel)]="validDate"
                 type="text"
                 name="name"
                 class="form-control"
                 required="required"
               />
-              <i class="fa fa-credit-card"></i>
             </div>
-          </div>
-          <div class="col-md-6">
-            <div class="d-flex flex-row">
-              <div class="inputbox mt-3 mr-2">
-                <span>Son Kullanım Tarihi</span>
-                <input
-                  [(ngModel)]="validDate"
-                  type="text"
-                  name="name"
-                  class="form-control"
-                  required="required"
-                />
-              </div>
-              <div class="inputbox mt-3 mr-2">
-                <span>Güvenlik Kodu</span>
-                <input
-                  [(ngModel)]="CVV"
-                  type="text"
-                  name="name"
-                  class="form-control"
-                  required="required"
-                />
-              </div>
+            <div class="inputbox mt-3 mr-2">
+              <span>Güvenlik Kodu</span>
+              <input
+                [(ngModel)]="CVV"
+                type="text"
+                name="name"
+                class="form-control"
+                required="required"
+              />
+            </div>
+            <div class="form-check mb-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="save"
+                formControlName="save"
+              />
+              <label class="form-check-label" for="save">
+                Kart bilgilerimin kayıt edilmesini istiyorum.
+              </label>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="card-footer">
-      <div class="row">
-        <button (click)="rentACar()" class="btn btn-success">
-          <strong>{{ amountOfPayment | currency: "₺" }} </strong>Ödeme Yap
-        </button>
-      </div>
+  </div>
+  <div class="card-footer">
+    <div class="row">
+      <button (click)="rentACar()" class="btn btn-success">
+        <strong>{{ amountOfPayment | currency: "₺" }} </strong>Ödeme Yap
+      </button>
+    </div>
+    <div class="col-lg-6">
+      <app-card-saved (selectedCard)="setSelectedCard($event)"></app-card-saved>
     </div>
   </div>
+</div>

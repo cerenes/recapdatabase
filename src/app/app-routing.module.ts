@@ -8,7 +8,11 @@ import { CarComponent } from './components/car/car.component';
 import { CarDetailComponent } from './components/cardetail/cardetail.component';
 import { ColorAddComponent } from './components/color-add/color-add.component';
 import { ColorUpdateComponent } from './components/color-update/color-update.component';
+import { LoginComponent } from './components/login/login.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { RegisterComponent } from './components/register/register.component';
 import { RentalComponent } from './components/rental/rental.component';
+import { LoginGuard } from './guards/login.guard';
 
 const routes: Routes = [
   {path:"", pathMatch:"full", component:CarComponent},
@@ -17,12 +21,16 @@ const routes: Routes = [
   {path:"cars/color/:colorId", component:CarComponent},
   {path:"cars/:Id", component:CarDetailComponent},
   {path:"cars/filter/:brandId/:colorId",component:CarComponent},
-  {path:"brands/:add",component:BrandAddComponent},
-  {path:"cars/:add",component:CarAddComponent},
-  {path:"colors/:add",component:ColorAddComponent},
-  {path:"colors/:update",component:ColorUpdateComponent},
-  {path:"brands/:update",component:BrandUpdateComponent},
-  {path:"cars/:update",component:CarUpdateComponent},
+  {path:"brands/:add",component:BrandAddComponent, canActivate:[LoginGuard]},
+  {path:"cars/:add",component:CarAddComponent, canActivate:[LoginGuard]},
+  {path:"colors/:add",component:ColorAddComponent, canActivate:[LoginGuard]},
+  {path:"colors/:update",component:ColorUpdateComponent, canActivate:[LoginGuard]},
+  {path:"brands/:update",component:BrandUpdateComponent, canActivate:[LoginGuard]},
+  {path:"cars/:update",component:CarUpdateComponent, canActivate:[LoginGuard]},
+  {path:"login", component:LoginComponent},
+  {path:"register", component:RegisterComponent},
+  {path:"profile", component:ProfileComponent}
+
   
 ];
 

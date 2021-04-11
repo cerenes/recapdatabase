@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Car } from 'src/app/models/car';
 import { Card } from 'src/app/models/card';
+import { CarDetail } from 'src/app/models/carDetail';
 import { Customer } from 'src/app/models/customer';
 import { Rental } from 'src/app/models/rental';
+import { CarDetailService } from 'src/app/services/car-detail.service';
 import { CarService } from 'src/app/services/car.service';
 import { CardService } from 'src/app/services/card.service';
 import { CustomerService } from 'src/app/services/customer.service';
+import { LocalstorageService } from 'src/app/services/localstorage.service';
 import { RentalService } from 'src/app/services/rental.service';
 
 @Component({
@@ -18,27 +22,35 @@ import { RentalService } from 'src/app/services/rental.service';
 export class CardComponent implements OnInit {
 
   rental: Rental;
+  cardAddForm: FormGroup;
   cars: Car;
   customer: Customer;
   getCustomerId: number;
   amountOfPayment: number = 0;
   cardNameSurname: string;
   cardNumber: string;
+  carDetail: CarDetail;
   CVV: string;
   validDate: string;
   card: Card;
+  totalPrice: number = 0;
   cardExist: Boolean = false;
   moneyInTheCard:number;
+  save: Boolean;
 
   constructor(
     private activateRoute: ActivatedRoute,
     private carService: CarService,
     private customerService: CustomerService,
     private router: Router,
+    private localStorageService: LocalstorageService,
     private toastrService: ToastrService,
     private rentalService: RentalService,
-    private cardService: CardService
+    private cardService: CardService,
+    private carDetailService: CarDetailService,
+    
   ) {}
+  
 
   ngOnInit(): void {
     this.activateRoute.params.subscribe((params) => {
@@ -50,6 +62,7 @@ export class CardComponent implements OnInit {
       }
     });
   }
+ 
 
   getCustomerDetailById(customerId: number) {
     this.customerService.getCustomerById(customerId).subscribe((response) => {
@@ -88,12 +101,13 @@ export class CardComponent implements OnInit {
 
   async rentACar() {
     let card: Card = {
-      
+      save: [true],
       cardNameSurname: this.cardNameSurname,
       cardNumber: this.cardNumber,
       validDate: this.validDate,
       CVV: this.CVV,
-      moneyInTheCard: this.card.moneyInTheCard
+      moneyInTheCard: this.card.moneyInTheCard,
+      
     
     };
     this.cardExist = await this.isCardExist(card);
@@ -129,4 +143,72 @@ export class CardComponent implements OnInit {
   updateCard(card: Card) {
     this.cardService.updateCard(card);
   }
+  add() {
+    this.rental = Object.assign({}, this.rentalService.getRentingCar());
+
+    if (this.cardAddForm.invalid) {
+       return this.toastrService.warning('Bilgilerinizi kontrol ediniz', 'Dikkat');
+    }
+
+    if (this.cardAddForm.value.save) {
+       delete this.cardAddForm.value.save;
+       this.card = Object.assign({}, this.cardAddForm.value);
+       this.addCard(this.card);
+    }
+
+    return this.addRental(this.rental);
+ }
+ addRental(rental: Rental) {
+  this.rentalService.addRental(rental).subscribe(responseSuccess => {
+     this.toastrService.success(responseSuccess.message, 'Başarılı');
+     this.updateCurrentCustomerFindexPoint();
+
+     return this.router.navigate(['']);
+  }, responseError => {
+     console.log(responseError);
+     if (responseError.error.ValidationErrors) {
+        for (let i = 0; i < responseError.error.ValidationErrors.length; i++) {
+           this.toastrService.error(
+              responseError.error.ValidationErrors[i].ErrorMessage, 'Doğrulama Hatası'
+           );
+        }
+
+        return false;
+     }
+
+     this.toastrService.error(responseError.error.message, 'Hata');
+     return false;
+  });
+}
+ addCard(card: Card) {
+  this.cardService.addCard(card).subscribe(responseSuccess => {
+     return responseSuccess.success;
+  }, responseError => {
+     if (responseError.error.ValidationErrors.length > 0) {
+        for (let i = 0; i < responseError.error.ValidationErrors.length; i++) {
+           this.toastrService.error(
+              responseError.error.ValidationErrors[i].ErrorMessage, 'Doğrulama Hatası'
+           );
+        }
+
+        return;
+     }
+
+     this.toastrService.error(responseError.error.Message, responseError.error.StatusCode);
+     return;
+  });
+}
+setSelectedCard(cardOnEventing: Card) {
+  
+  this.card = Object.assign(cardOnEventing, { save: false });
+  this.cardAddForm.setValue(this.card);
+}
+updateCurrentCustomerFindexPoint() {
+  let currentCustomer = this.localStorageService.getCurrentCustomer();
+
+  this.customerService.getCustomerByEmail(currentCustomer.email).subscribe(response => {
+     this.localStorageService.setCurrentCustomer(response.data);
+  });
+}
+  
 }

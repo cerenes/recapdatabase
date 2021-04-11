@@ -37,5 +37,6 @@ export class CardService {
     let newPath = this.apiUrl + "getbycardnumber?cardNumber=" + cardNumber;
     return this.httpClient.get<ListResponseModel<Card>>(newPath);
   }
+  
 
 }
